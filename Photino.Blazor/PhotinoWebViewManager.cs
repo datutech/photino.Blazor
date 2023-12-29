@@ -90,6 +90,8 @@ namespace Photino.Blazor
 
         protected override void SendMessage(string message)
         {
+            // TODO: use WriteAsync?
+            // Because this is the main thread, we dont want to block it
             while (!_channel.Writer.TryWrite(message))
                 Thread.Sleep(200);
         }
@@ -108,13 +110,13 @@ namespace Photino.Blazor
             catch (ChannelClosedException) { }
         }
 
-        protected override ValueTask DisposeAsyncCore()
+        protected async override ValueTask DisposeAsyncCore()
         {
+            //continue disposing
+            await base.DisposeAsyncCore();
             //complete channel
             try { _channel.Writer.Complete(); } catch { }
-
-            //continue disposing
-            return base.DisposeAsyncCore();
+            return;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace Photino.Blazor.Sample
             var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
 
             appBuilder.Services
+                .AddSingleton<DisposableService>()
+                .AddSingleton<AsyncDisposableService>()
                 .AddLogging();
 
             // register root component and selector
@@ -24,14 +26,20 @@ namespace Photino.Blazor.Sample
             app.MainWindow
                 .SetIconFile("favicon.ico")
                 .SetTitle("Photino Blazor Sample");
+            app.MainWindow.WindowClosing += (sender, args) =>
+            {
+                return false;
+            };
 
             AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
             {
                 app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
             };
-
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                return;
+            };
             app.Run();
-
         }
     }
 }

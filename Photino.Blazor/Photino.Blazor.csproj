@@ -43,13 +43,13 @@
 	<!--</ItemGroup>-->
   <ItemGroup Condition="'$(Configuration)' == 'Debug' ">
     <Reference Include="Photino.NET">
-      <HintPath>D:\Development\dt\opensource\photino\photino.NET\Photino.NET\bin\Debug\net8.0\Photino.NET.dll</HintPath>
+      <HintPath>..\..\photino.NET\Photino.NET\bin\Debug\net8.0\Photino.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
     <Reference Include="Photino.NET">
-      <HintPath>D:\Development\dt\opensource\photino\photino.NET\Photino.NET\bin\Release\net8.0\Photino.NET.dll</HintPath>
+      <HintPath>..\..\photino.NET\Photino.NET\bin\Release\net8.0\Photino.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 

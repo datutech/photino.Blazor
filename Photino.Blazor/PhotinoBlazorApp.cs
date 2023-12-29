@@ -2,10 +2,11 @@ using Microsoft.Extensions.DependencyInjection;
 using PhotinoNET;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Photino.Blazor
 {
-    public class PhotinoBlazorApp
+    public class PhotinoBlazorApp : IAsyncDisposable
     {
         /// <summary>
         /// Gets configuration for the service provider.
@@ -55,5 +56,38 @@ namespace Photino.Blazor
 
         public Stream HandleWebRequest(object sender, string scheme, string url, out string contentType)
                 => WindowManager.HandleWebRequest(sender, scheme, url, out contentType!)!;
+
+        private bool _disposed;
+
+        public virtual async ValueTask DisposeAsyncCore()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+
+                // We explicitly dispose WebviewManager first 
+                await WindowManager.DisposeAsync();
+                // Now dispose all services in DI
+                await DisposeAsync(Services);
+
+                static async ValueTask DisposeAsync(object o)
+                {
+                    switch (o)
+                    {
+                        case IAsyncDisposable asyncDisposable:
+                            await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                            break;
+                        case IDisposable disposable:
+                            disposable.Dispose();
+                            break;
+                    }
+                }
+            }
+        }
+        public async ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            await DisposeAsyncCore();
+        }
     }
 }
